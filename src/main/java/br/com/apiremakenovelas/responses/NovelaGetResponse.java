@@ -1,0 +1,23 @@
+package br.com.apiremakenovelas.responses;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+public class NovelaGetResponse
+{
+	private int id;
+	private String titulo;
+	private String sinopse;
+	private String autorOriginal;
+	private String autorAtual;
+	private String dadosVersoes;
+	private String dadosPersonagens;
+}
