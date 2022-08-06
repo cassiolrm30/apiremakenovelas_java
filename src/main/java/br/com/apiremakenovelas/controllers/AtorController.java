@@ -58,12 +58,12 @@ public class AtorController
 					response.setDataFalecimento(simpleDateFormatBR.format(registro.getDataFalecimento()));
 				response.setCidadeNatal(dadosCidadeNatal[0]);
 				response.setUF(dadosCidadeNatal[1]);
-    			response.setImagemFoto(registro.getImagemfoto());
-				response.setGeneroId(registro.getIdgenero());
-				response.setEtniaId(registro.getIdetnia());
-				response.setFaixaEtariaId(registro.getIdfaixaetaria());
-				response.setFaixaPesoId(registro.getIdfaixapeso());
-				response.setFaixaEstaturaId(registro.getIdfaixaestatura());
+    			response.setImagemFoto(registro.getImagemFoto());
+				response.setGeneroId(registro.getIdGenero());
+				response.setEtniaId(registro.getIdEtnia());
+				response.setFaixaEtariaId(registro.getIdFaixaEtaria());
+				response.setFaixaPesoId(registro.getIdFaixaPeso());
+				response.setFaixaEstaturaId(registro.getIdFaixaEstatura());
 				lista.add(response);
 			}
 
@@ -98,12 +98,12 @@ public class AtorController
 					resultado.setDataFalecimento(simpleDateFormatMySQL.format(registro.getDataFalecimento()));
 				resultado.setCidadeNatal(dadosCidadeNatal[0].trim());
 				resultado.setUF(dadosCidadeNatal[1].trim());
-				resultado.setImagemFoto(registro.getImagemfoto());
-				resultado.setGeneroId(registro.getIdgenero());
-				resultado.setEtniaId(registro.getIdetnia());
-				resultado.setFaixaEtariaId(registro.getIdfaixaetaria());
-				resultado.setFaixaPesoId(registro.getIdfaixapeso());
-				resultado.setFaixaEstaturaId(registro.getIdfaixaestatura());
+				resultado.setImagemFoto(registro.getImagemFoto());
+				resultado.setGeneroId(registro.getIdGenero());
+				resultado.setEtniaId(registro.getIdEtnia());
+				resultado.setFaixaEtariaId(registro.getIdFaixaEtaria());
+				resultado.setFaixaPesoId(registro.getIdFaixaPeso());
+				resultado.setFaixaEstaturaId(registro.getIdFaixaEstatura());
 	            //String nomeArquivo = "";
                 //String caminhoArquivo = "C:\\Users\\cassi\\Desktop\\SistemaRemakeNovelas - FRONT-END\\JAVA\\imagens\\atores\\";
 	            //if (registro.ImagemFoto != null)
@@ -185,18 +185,18 @@ public class AtorController
 			// capturando e salvando os dados
 			Ator newRegistro = new Ator();
 			Date dataNascimento = simpleDateFormatMySQL.parse(request.getDataNascimento());
-			Date dataFalecimento = simpleDateFormatMySQL.parse((request.getDataFalecimento().equals("") ? dataMinima : request.getDataFalecimento()));
+			Date dataFalecimento = simpleDateFormatMySQL.parse((request.getDataFalecimento() == null ? dataMinima : request.getDataFalecimento()));
 			newRegistro.setNomeCompleto(request.getNomeCompleto());
 			newRegistro.setNomeArtistico(request.getNomeArtistico());
 			newRegistro.setDataNascimento(dataNascimento);
 			newRegistro.setDataFalecimento(dataFalecimento);
 			newRegistro.setCidadeNatal(request.getCidadeNatal() + "-" + request.getUF());
-			newRegistro.setImagemfoto(request.getImagemFoto());
-			newRegistro.setIdgenero(request.getGeneroId());
-			newRegistro.setIdetnia(request.getEtniaId());
-			newRegistro.setIdfaixaetaria(request.getFaixaEtariaId());
-			newRegistro.setIdfaixapeso(request.getFaixaPesoId());
-			newRegistro.setIdfaixaestatura(request.getFaixaEstaturaId());
+			newRegistro.setImagemFoto(request.getImagemFoto());
+			newRegistro.setIdGenero(request.getGeneroId());
+			newRegistro.setIdEtnia(request.getEtniaId());
+			newRegistro.setIdFaixaEtaria(request.getFaixaEtariaId());
+			newRegistro.setIdFaixaPeso(request.getFaixaPesoId());
+			newRegistro.setIdFaixaEstatura(request.getFaixaEstaturaId());
 			repository.save(newRegistro);
 			
 			// HTTP 201 (CREATED)
@@ -228,18 +228,18 @@ public class AtorController
 	        // capturando e salvando os dados
 			Ator newRegistro = oldRegistro.get();
 			Date dataNascimento = simpleDateFormatMySQL.parse(request.getDataNascimento());
-			Date dataFalecimento = simpleDateFormatMySQL.parse((request.getDataFalecimento().equals("") ? dataMinima : request.getDataFalecimento()));
+			Date dataFalecimento = simpleDateFormatMySQL.parse((request.getDataFalecimento() == null ? dataMinima : request.getDataFalecimento()));
 			newRegistro.setNomeCompleto(request.getNomeCompleto());
 			newRegistro.setNomeArtistico(request.getNomeArtistico());
 			newRegistro.setDataNascimento(dataNascimento);
 			newRegistro.setDataFalecimento(dataFalecimento);
 			newRegistro.setCidadeNatal(request.getCidadeNatal() + "-" + request.getUF());
-			newRegistro.setImagemfoto(request.getImagemFoto());
-			newRegistro.setIdgenero(request.getGeneroId());
-			newRegistro.setIdetnia(request.getEtniaId());
-			newRegistro.setIdfaixaetaria(request.getFaixaEtariaId());
-			newRegistro.setIdfaixapeso(request.getFaixaPesoId());
-			newRegistro.setIdfaixaestatura(request.getFaixaEstaturaId());
+			newRegistro.setImagemFoto(request.getImagemFoto());
+			newRegistro.setIdGenero(request.getGeneroId());
+			newRegistro.setIdEtnia(request.getEtniaId());
+			newRegistro.setIdFaixaEtaria(request.getFaixaEtariaId());
+			newRegistro.setIdFaixaPeso(request.getFaixaPesoId());
+			newRegistro.setIdFaixaEstatura(request.getFaixaEstaturaId());
 			newRegistro.setId(request.getId());
 			repository.save(newRegistro);
 			

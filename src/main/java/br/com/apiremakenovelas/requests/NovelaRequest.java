@@ -18,6 +18,6 @@ public class NovelaRequest
 	private String sinopse;
 	private String autorOriginal;
 	private String autorAtual;
-	private String dadosVersoes;
-	private String dadosPersonagens;
+	private String[][] dadosVersoes;
+	private String[][] dadosPersonagens;
 }

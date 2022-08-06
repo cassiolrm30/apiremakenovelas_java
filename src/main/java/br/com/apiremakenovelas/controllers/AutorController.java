@@ -53,8 +53,8 @@ public class AutorController
 				//	response.setDataFalecimento(simpleDateFormatBR.format(registro.getDataFalecimento()));
 				response.setCidadeNatal(dadosCidadeNatal[0]);
 				response.setUF(dadosCidadeNatal[1]);
-    			response.setImagemFoto(registro.getImagemfoto());
-				response.setGeneroId(registro.getIdgenero());
+    			response.setImagemFoto(registro.getImagemFoto());
+				response.setGeneroId(registro.getIdGenero());
 				lista.add(response);
 			}
 
@@ -89,8 +89,8 @@ public class AutorController
 				//	resultado.setDataFalecimento(simpleDateFormatMySQL.format(registro.getDataFalecimento()));
 				resultado.setCidadeNatal(dadosCidadeNatal[0].trim());
 				resultado.setUF(dadosCidadeNatal[1].trim());
-				resultado.setImagemFoto(registro.getImagemfoto());
-				resultado.setGeneroId(registro.getIdgenero());
+				resultado.setImagemFoto(registro.getImagemFoto());
+				resultado.setGeneroId(registro.getIdGenero());
 	            //String nomeArquivo = "";
                 //String caminhoArquivo = "C:\\Users\\cassi\\Desktop\\SistemaRemakeNovelas - FRONT-END\\JAVA\\imagens\\atores\\";
 	            //if (registro.ImagemFoto != null)
@@ -141,8 +141,8 @@ public class AutorController
 			newRegistro.setDataNascimento(dataNascimento);
 			newRegistro.setDataFalecimento(dataFalecimento);
 			newRegistro.setCidadeNatal(request.getCidadeNatal() + "-" + request.getUF());
-			newRegistro.setImagemfoto(request.getImagemFoto());
-			newRegistro.setIdgenero(request.getGeneroId());
+			newRegistro.setImagemFoto(request.getImagemFoto());
+			newRegistro.setIdGenero(request.getGeneroId());
 			repository.save(newRegistro);
 			
 			// HTTP 201 (CREATED)
@@ -180,8 +180,8 @@ public class AutorController
 			newRegistro.setDataNascimento(dataNascimento);
 			newRegistro.setDataFalecimento(dataFalecimento);
 			newRegistro.setCidadeNatal(request.getCidadeNatal() + "-" + request.getUF());
-			newRegistro.setImagemfoto(request.getImagemFoto());
-			newRegistro.setIdgenero(request.getGeneroId());
+			newRegistro.setImagemFoto(request.getImagemFoto());
+			newRegistro.setIdGenero(request.getGeneroId());
 			newRegistro.setId(request.getId());
 			repository.save(newRegistro);
 

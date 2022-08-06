@@ -48,20 +48,20 @@ public class Ator
 	private String cidadeNatal;
 
 	@JoinColumn(name = "idgenero", nullable = false)
-	private Integer idgenero;
+	private Integer idGenero;
 
 	@JoinColumn(name = "idetnia", nullable = false)
-	private Integer idetnia;
+	private Integer idEtnia;
 	
 	@JoinColumn(name = "idfaixaetaria", nullable = false)
-	private Integer idfaixaetaria;
+	private Integer idFaixaEtaria;
 	
 	@JoinColumn(name = "idfaixapeso", nullable = false)
-	private Integer idfaixapeso;
+	private Integer idFaixaPeso;
 	
 	@JoinColumn(name = "idfaixaestatura", nullable = false)
-	private Integer idfaixaestatura;
+	private Integer idFaixaEstatura;
 	
 	@Column(name = "imagemfoto", nullable = true)
-	private String imagemfoto;
+	private String imagemFoto;
 }

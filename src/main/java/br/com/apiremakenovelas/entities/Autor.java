@@ -50,10 +50,10 @@ public class Autor
 	private String cidadeNatal;
 	
 	@Column(name = "imagemfoto", nullable = true)
-	private String imagemfoto;
+	private String imagemFoto;
 
 	@JoinColumn(name = "idgenero", nullable = false)
-	private Integer idgenero;
+	private Integer idGenero;
 
 	@OneToMany(mappedBy = "autor")
 	private List<VersaoNovela> novelas;	

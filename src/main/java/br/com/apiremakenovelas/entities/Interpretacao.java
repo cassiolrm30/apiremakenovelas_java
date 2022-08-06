@@ -24,7 +24,7 @@ public class Interpretacao
 
 	@ManyToOne
 	@JoinColumn(name = "idversaonovela", nullable = false)
-	private VersaoNovela versaonovela;
+	private VersaoNovela versaoNovela;
 
 	@ManyToOne
 	@JoinColumn(name = "idpersonagem", nullable = false)

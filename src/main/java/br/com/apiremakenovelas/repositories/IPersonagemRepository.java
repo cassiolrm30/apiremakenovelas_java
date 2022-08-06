@@ -11,6 +11,6 @@ public interface IPersonagemRepository extends CrudRepository<Personagem, Intege
 	@Query("SELECT P from Personagem P WHERE P.id = :param1")
 	Optional<Personagem> findById(@Param("param1") int id);
 
-	@Query("SELECT P.id, P.nome, P.idgenero, P.generoobrig, P.idetnia, P.etniaobrig, P.idfaixaetaria, P.faixaetariaobrig, P.idfaixapeso, P.faixapesoobrig, P.idfaixaestatura, P.faixaestaturaobrig FROM Personagem P WHERE P.novela.id = :param1 ORDER BY P.nome")
+	@Query("SELECT P.id, P.nome, P.idGenero, P.generoObrig, P.idEtnia, P.etniaObrig, P.idFaixaEtaria, P.faixaEtariaObrig, P.idFaixaPeso, P.faixaPesoObrig, P.idFaixaEstatura, P.faixaEstaturaObrig FROM Personagem P WHERE P.novela.id = :param1 ORDER BY P.nome")
 	List<Personagem> findByPrioridadesPerfis(@Param("param1") int id);
 }

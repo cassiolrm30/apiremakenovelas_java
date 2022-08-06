@@ -41,16 +41,16 @@ public class PersonagemController
 				PersonagemGetResponse response = new PersonagemGetResponse();
 				response.setId(registro.getId());
 				response.setNome(registro.getNome());
-				response.setIdgenero(registro.getIdgenero());
-				response.setIdetnia(registro.getIdetnia());
-				response.setIdfaixaetaria(registro.getIdfaixaetaria());
-				response.setIdfaixapeso(registro.getIdfaixapeso());
-				response.setIdfaixaestatura(registro.getIdfaixaestatura());
-				response.setGeneroObrig(registro.isGeneroobrig());
-				response.setEtniaObrig(registro.isEtniaobrig());
-				response.setFaixaEtariaObrig(registro.isFaixaetariaobrig());
-				response.setFaixaPesoObrig(registro.isFaixapesoobrig());
-				response.setFaixaEstaturaObrig(registro.isFaixaestaturaobrig());
+				response.setIdgenero(registro.getIdGenero());
+				response.setIdetnia(registro.getIdEtnia());
+				response.setIdfaixaetaria(registro.getIdFaixaEtaria());
+				response.setIdfaixapeso(registro.getIdFaixaPeso());
+				response.setIdfaixaestatura(registro.getIdFaixaEstatura());
+				response.setGeneroObrig(registro.isGeneroObrig());
+				response.setEtniaObrig(registro.isEtniaObrig());
+				response.setFaixaEtariaObrig(registro.isFaixaEtariaObrig());
+				response.setFaixaPesoObrig(registro.isFaixaPesoObrig());
+				response.setFaixaEstaturaObrig(registro.isFaixaEstaturaObrig());
 				lista.add(response);
 			}
 
@@ -79,16 +79,16 @@ public class PersonagemController
 				PersonagemGetResponse response = new PersonagemGetResponse();
 				response.setId(id);
 				response.setNome(registro.getNome());
-				response.setIdgenero(registro.getIdgenero());
-				response.setIdetnia(registro.getIdetnia());
-				response.setIdfaixaetaria(registro.getIdfaixaetaria());
-				response.setIdfaixapeso(registro.getIdfaixapeso());
-				response.setIdfaixaestatura(registro.getIdfaixaestatura());
-				response.setGeneroObrig(registro.isGeneroobrig());
-				response.setEtniaObrig(registro.isEtniaobrig());
-				response.setFaixaEtariaObrig(registro.isFaixaetariaobrig());
-				response.setFaixaPesoObrig(registro.isFaixapesoobrig());
-				response.setFaixaEstaturaObrig(registro.isFaixaestaturaobrig());
+				response.setIdgenero(registro.getIdGenero());
+				response.setIdetnia(registro.getIdEtnia());
+				response.setIdfaixaetaria(registro.getIdFaixaEtaria());
+				response.setIdfaixapeso(registro.getIdFaixaPeso());
+				response.setIdfaixaestatura(registro.getIdFaixaEstatura());
+				response.setGeneroObrig(registro.isGeneroObrig());
+				response.setEtniaObrig(registro.isEtniaObrig());
+				response.setFaixaEtariaObrig(registro.isFaixaEtariaObrig());
+				response.setFaixaPesoObrig(registro.isFaixaPesoObrig());
+				response.setFaixaEstaturaObrig(registro.isFaixaEstaturaObrig());
 			}
 
 			// HTTP 200 (OK)
@@ -111,16 +111,16 @@ public class PersonagemController
 			// capturando e salvando os dados
 			Personagem newRegistro = new Personagem();
 			newRegistro.setNome(request.getNome());
-			newRegistro.setIdgenero(null);
-			newRegistro.setIdetnia(null);
-			newRegistro.setIdfaixaetaria(null);
-			newRegistro.setIdfaixapeso(null);
-			newRegistro.setIdfaixaestatura(null);
-			newRegistro.setGeneroobrig(false);
-			newRegistro.setEtniaobrig(false);
-			newRegistro.setFaixaetariaobrig(false);
-			newRegistro.setFaixapesoobrig(false);
-			newRegistro.setFaixaestaturaobrig(false);
+			newRegistro.setIdGenero(null);
+			newRegistro.setIdEtnia(null);
+			newRegistro.setIdFaixaEtaria(null);
+			newRegistro.setIdFaixaPeso(null);
+			newRegistro.setIdFaixaEstatura(null);
+			newRegistro.setGeneroObrig(false);
+			newRegistro.setEtniaObrig(false);
+			newRegistro.setFaixaEtariaObrig(false);
+			newRegistro.setFaixaPesoObrig(false);
+			newRegistro.setFaixaEstaturaObrig(false);
 			repository.save(newRegistro);
 			
 			// HTTP 201 (CREATED)
@@ -151,16 +151,16 @@ public class PersonagemController
 
 	        // capturando e salvando os dados
 	        Personagem newRegistro = oldRegistro.get();
-			newRegistro.setIdgenero(null);
-			newRegistro.setIdetnia(null);
-			newRegistro.setIdfaixaetaria(null);
-			newRegistro.setIdfaixapeso(null);
-			newRegistro.setIdfaixaestatura(null);
-			newRegistro.setGeneroobrig(false);
-			newRegistro.setEtniaobrig(false);
-			newRegistro.setFaixaetariaobrig(false);
-			newRegistro.setFaixapesoobrig(false);
-			newRegistro.setFaixaestaturaobrig(false);
+			newRegistro.setIdGenero(null);
+			newRegistro.setIdEtnia(null);
+			newRegistro.setIdFaixaEtaria(null);
+			newRegistro.setIdFaixaPeso(null);
+			newRegistro.setIdFaixaEstatura(null);
+			newRegistro.setGeneroObrig(false);
+			newRegistro.setEtniaObrig(false);
+			newRegistro.setFaixaEtariaObrig(false);
+			newRegistro.setFaixaPesoObrig(false);
+			newRegistro.setFaixaEstaturaObrig(false);
 			newRegistro.setId(request.getId());
 			repository.save(newRegistro);
 

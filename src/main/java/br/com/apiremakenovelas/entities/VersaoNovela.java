@@ -13,7 +13,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -21,7 +20,6 @@ import lombok.ToString;
 @Table(name = "versaonovela")
 @Setter
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 @ToString
 public class VersaoNovela
@@ -36,10 +34,10 @@ public class VersaoNovela
 	private Date dataLancamento;
 
 	@Column(name = "qtdcapitulos", nullable = false)
-	private Integer qtdcapitulos;
+	private Integer qtdCapitulos;
 	
-	@Column(name = "imagemlogotipo", nullable = false)
-	private String imagemlogotipo;
+	@Column(name = "imagemlogotipo", nullable = true)
+	private String imagemLogotipo;
 
 	@Column(name = "elencocompleto", nullable = false)
 	private boolean elencoCompleto;
@@ -51,4 +49,9 @@ public class VersaoNovela
 	@ManyToOne
 	@JoinColumn(name = "idversaooriginal", nullable = true)
 	private Novela versaoOriginal;
+	
+	public VersaoNovela()
+	{
+		this.setAutor(new Autor());
+	}
 }

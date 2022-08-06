@@ -10,7 +10,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -18,7 +17,6 @@ import lombok.ToString;
 @Table(name = "personagem")
 @Setter
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 @ToString
 public class Personagem
@@ -32,36 +30,41 @@ public class Personagem
 	private String nome;
 
 	@Column(name = "idgenero", nullable = false)
-	private Integer idgenero;
+	private Integer idGenero;
 
 	@Column(name = "generoobrig", nullable = false)
-	private boolean generoobrig;
+	private boolean generoObrig;
 
 	@Column(name = "idetnia", nullable = false)
-	private Integer idetnia;
+	private Integer idEtnia;
 	
 	@Column(name = "etniaobrig", nullable = false)
-	private boolean etniaobrig;
+	private boolean etniaObrig;
 	
 	@Column(name = "idfaixaetaria", nullable = false)
-	private Integer idfaixaetaria;
+	private Integer idFaixaEtaria;
 	
 	@Column(name = "faixaetariaobrig", nullable = false)
-	private boolean faixaetariaobrig;
+	private boolean faixaEtariaObrig;
 
 	@Column(name = "idfaixapeso", nullable = false)
-	private Integer idfaixapeso;
+	private Integer idFaixaPeso;
 	
 	@Column(name = "faixapesoobrig", nullable = false)
-	private boolean faixapesoobrig;
+	private boolean faixaPesoObrig;
 	
 	@Column(name = "idfaixaestatura", nullable = false)
-	private Integer idfaixaestatura;
+	private Integer idFaixaEstatura;
 
 	@Column(name = "faixaestaturaobrig", nullable = false)
-	private boolean faixaestaturaobrig;
+	private boolean faixaEstaturaObrig;
 
 	@ManyToOne
 	@JoinColumn(name = "idnovela", nullable = false)
 	private Novela novela;
+	
+	public Personagem()
+	{
+		this.setNovela(new Novela());
+	}
 }
