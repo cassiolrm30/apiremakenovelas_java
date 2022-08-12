@@ -28,7 +28,7 @@ public class PersonagemController
 
 	@CrossOrigin
 	@ApiOperation("Endpoint para consulta de personagens.")
-	@RequestMapping(value = "/api/personagens", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/personagem", method = RequestMethod.GET)
 	public ResponseEntity<List<PersonagemGetResponse>> get()
 	{	
 		try
@@ -41,11 +41,11 @@ public class PersonagemController
 				PersonagemGetResponse response = new PersonagemGetResponse();
 				response.setId(registro.getId());
 				response.setNome(registro.getNome());
-				response.setIdgenero(registro.getIdGenero());
-				response.setIdetnia(registro.getIdEtnia());
-				response.setIdfaixaetaria(registro.getIdFaixaEtaria());
-				response.setIdfaixapeso(registro.getIdFaixaPeso());
-				response.setIdfaixaestatura(registro.getIdFaixaEstatura());
+				response.setIdGenero(registro.getIdGenero());
+				response.setIdEtnia(registro.getIdEtnia());
+				response.setIdFaixaEtaria(registro.getIdFaixaEtaria());
+				response.setIdFaixaPeso(registro.getIdFaixaPeso());
+				response.setIdFaixaEstatura(registro.getIdFaixaEstatura());
 				response.setGeneroObrig(registro.isGeneroObrig());
 				response.setEtniaObrig(registro.isEtniaObrig());
 				response.setFaixaEtariaObrig(registro.isFaixaEtariaObrig());
@@ -66,7 +66,7 @@ public class PersonagemController
 
 	@CrossOrigin
 	@ApiOperation("Endpoint para consulta de 1 registro.")
-	@RequestMapping(value = "/api/personagens/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/personagem/{id}", method = RequestMethod.GET)
 	public ResponseEntity<PersonagemGetResponse> get(@PathVariable int id)
 	{
 		try
@@ -79,11 +79,11 @@ public class PersonagemController
 				PersonagemGetResponse response = new PersonagemGetResponse();
 				response.setId(id);
 				response.setNome(registro.getNome());
-				response.setIdgenero(registro.getIdGenero());
-				response.setIdetnia(registro.getIdEtnia());
-				response.setIdfaixaetaria(registro.getIdFaixaEtaria());
-				response.setIdfaixapeso(registro.getIdFaixaPeso());
-				response.setIdfaixaestatura(registro.getIdFaixaEstatura());
+				response.setIdGenero(registro.getIdGenero());
+				response.setIdEtnia(registro.getIdEtnia());
+				response.setIdFaixaEtaria(registro.getIdFaixaEtaria());
+				response.setIdFaixaPeso(registro.getIdFaixaPeso());
+				response.setIdFaixaEstatura(registro.getIdFaixaEstatura());
 				response.setGeneroObrig(registro.isGeneroObrig());
 				response.setEtniaObrig(registro.isEtniaObrig());
 				response.setFaixaEtariaObrig(registro.isFaixaEtariaObrig());
@@ -103,7 +103,7 @@ public class PersonagemController
 
 	@CrossOrigin
 	@ApiOperation("Endpoint para cadastro de personagens.")
-	@RequestMapping(value = "/api/personagens", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/personagem", method = RequestMethod.POST)
 	public ResponseEntity<String> post(@RequestBody PersonagemRequest request)
 	{
 		try
@@ -140,7 +140,7 @@ public class PersonagemController
 
 	@CrossOrigin
 	@ApiOperation("Endpoint para atualização de personagens.")
-	@RequestMapping(value = "/api/personagens", method = RequestMethod.PUT)
+	@RequestMapping(value = "/api/personagem", method = RequestMethod.PUT)
 	public ResponseEntity<String> put(@RequestBody PersonagemRequest request)
 	{
 		try
@@ -181,7 +181,7 @@ public class PersonagemController
 	
 	@CrossOrigin
 	@ApiOperation("Endpoint para exclusão de personagens.")
-	@RequestMapping(value = "/api/personagens/{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/api/personagem/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<String> delete(@PathVariable(value = "id") Integer id)
 	{
 		try

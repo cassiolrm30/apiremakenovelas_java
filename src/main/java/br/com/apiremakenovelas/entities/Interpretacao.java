@@ -23,14 +23,21 @@ public class Interpretacao
 	private Integer id;
 
 	@ManyToOne
-	@JoinColumn(name = "idversaonovela", nullable = false)
+	@JoinColumn(name = "id_ator", nullable = false)
+	private Ator ator;
+
+	@ManyToOne
+	@JoinColumn(name = "id_versao_novela", nullable = false)
 	private VersaoNovela versaoNovela;
 
 	@ManyToOne
-	@JoinColumn(name = "idpersonagem", nullable = false)
+	@JoinColumn(name = "id_personagem", nullable = false)
 	private Personagem personagem;
 
-	@ManyToOne
-	@JoinColumn(name = "idator", nullable = false)
-	private Ator ator;
+	public Interpretacao()
+	{
+		this.setVersaoNovela(new VersaoNovela());
+		this.setPersonagem(new Personagem());
+		this.setAtor(new Ator());
+	}
 }

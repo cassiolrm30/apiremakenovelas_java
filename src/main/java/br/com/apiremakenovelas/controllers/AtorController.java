@@ -50,6 +50,7 @@ public class AtorController
 			{
 				AtorGetResponse response = new AtorGetResponse();
 				String[] dadosCidadeNatal = registro.getCidadeNatal().split("-");
+				String nomeArquivo = registro.getNomeArtistico();
 				response.setId(registro.getId());
 				response.setNomeCompleto(registro.getNomeCompleto());
 				response.setNomeArtistico(registro.getNomeArtistico().toUpperCase());
@@ -58,12 +59,13 @@ public class AtorController
 					response.setDataFalecimento(simpleDateFormatBR.format(registro.getDataFalecimento()));
 				response.setCidadeNatal(dadosCidadeNatal[0]);
 				response.setUF(dadosCidadeNatal[1]);
-    			response.setImagemFoto(registro.getImagemFoto());
-				response.setGeneroId(registro.getIdGenero());
-				response.setEtniaId(registro.getIdEtnia());
-				response.setFaixaEtariaId(registro.getIdFaixaEtaria());
-				response.setFaixaPesoId(registro.getIdFaixaPeso());
-				response.setFaixaEstaturaId(registro.getIdFaixaEstatura());
+				response.setIdGenero(registro.getIdGenero());
+				response.setIdEtnia(registro.getIdEtnia());
+				response.setIdFaixaEtaria(registro.getIdFaixaEtaria());
+				response.setIdFaixaPeso(registro.getIdFaixaPeso());
+				response.setIdFaixaEstatura(registro.getIdFaixaEstatura());
+				response.setImagemFoto(getCaminhoArquivo(nomeArquivo));
+				response.setImagemUpload(getCaminhoArquivo(nomeArquivo));
 				lista.add(response);
 			}
 
@@ -90,6 +92,7 @@ public class AtorController
 			{
 				Ator registro = repositoryAux.get();
 	            String[] dadosCidadeNatal = registro.getCidadeNatal().split("-");
+	            String nomeArquivo = registro.getNomeArtistico();
 	            resultado.setId(id);
 	            resultado.setNomeCompleto(registro.getNomeCompleto());
 	            resultado.setNomeArtistico(registro.getNomeArtistico());
@@ -98,29 +101,13 @@ public class AtorController
 					resultado.setDataFalecimento(simpleDateFormatMySQL.format(registro.getDataFalecimento()));
 				resultado.setCidadeNatal(dadosCidadeNatal[0].trim());
 				resultado.setUF(dadosCidadeNatal[1].trim());
-				resultado.setImagemFoto(registro.getImagemFoto());
-				resultado.setGeneroId(registro.getIdGenero());
-				resultado.setEtniaId(registro.getIdEtnia());
-				resultado.setFaixaEtariaId(registro.getIdFaixaEtaria());
-				resultado.setFaixaPesoId(registro.getIdFaixaPeso());
-				resultado.setFaixaEstaturaId(registro.getIdFaixaEstatura());
-	            //String nomeArquivo = "";
-                //String caminhoArquivo = "C:\\Users\\cassi\\Desktop\\SistemaRemakeNovelas - FRONT-END\\JAVA\\imagens\\atores\\";
-	            //if (registro.ImagemFoto != null)
-	            //{
-	                //nomeArquivo = registro.getNomeArtistico().replace(" ", "_").toUpperCase().replace("'", "").toUpperCase() + ".jpg";
-	                //caminhoArquivo += nomeArquivo;
-	                /*if (System.IO.File.Exists(caminhoArquivo))
-	                {
-	                    FileStream fRead = new FileStream(caminhoArquivo, FileMode.Open);
-	                    int length = fRead.ReadByte();
-	                    byte[] readBytes = new byte[length];
-	                    fRead.Read(readBytes, 0, readBytes.Length);
-	                    foreach (var item in fRead.Name.Split("\\"))
-	                        nomeArquivo = item;
-	                    fRead.Close();
-	                }*/
-	            //}
+				resultado.setIdGenero(registro.getIdGenero());
+				resultado.setIdEtnia(registro.getIdEtnia());
+				resultado.setIdFaixaEtaria(registro.getIdFaixaEtaria());
+				resultado.setIdFaixaPeso(registro.getIdFaixaPeso());
+				resultado.setIdFaixaEstatura(registro.getIdFaixaEstatura());
+				resultado.setImagemFoto(getCaminhoArquivo(nomeArquivo));
+				resultado.setImagemUpload(getCaminhoArquivo(nomeArquivo));
 	            String itensAtores = "";
     			for (Ator item : repository.findAll())
     				itensAtores += item.getNomeArtistico().toUpperCase() + "|";
@@ -175,6 +162,28 @@ public class AtorController
 		return ResponseEntity.status(HttpStatus.OK).body(itens);
     }
 
+	public String getCaminhoArquivo(@PathVariable String nomeArquivo)
+    {
+        String resultado = "";
+        //String caminhoArquivo = "C:\\Users\\cassi\\Desktop\\SistemaRemakeNovelas - FRONT-END\\JAVA\\imagens\\atores\\";
+        //if (registro.ImagemFoto != null)
+        //{
+            //resultado = registro.getNomeArtistico().replace(" ", "_").toUpperCase().replace("'", "").toUpperCase() + ".jpg";
+            //caminhoArquivo += resultado;
+            /*if (System.IO.File.Exists(caminhoArquivo))
+            {
+                FileStream fRead = new FileStream(caminhoArquivo, FileMode.Open);
+                int length = fRead.ReadByte();
+                byte[] readBytes = new byte[length];
+                fRead.Read(readBytes, 0, readBytes.Length);
+                foreach (var item in fRead.Name.Split("\\"))
+                    resultado = item;
+                fRead.Close();
+            }*/
+        //}
+		return resultado;
+    }
+
 	@CrossOrigin
 	@ApiOperation("Endpoint para cadastro de atores.")
 	@RequestMapping(value = "/api/ator", method = RequestMethod.POST)
@@ -192,11 +201,11 @@ public class AtorController
 			newRegistro.setDataFalecimento(dataFalecimento);
 			newRegistro.setCidadeNatal(request.getCidadeNatal() + "-" + request.getUF());
 			newRegistro.setImagemFoto(request.getImagemFoto());
-			newRegistro.setIdGenero(request.getGeneroId());
-			newRegistro.setIdEtnia(request.getEtniaId());
-			newRegistro.setIdFaixaEtaria(request.getFaixaEtariaId());
-			newRegistro.setIdFaixaPeso(request.getFaixaPesoId());
-			newRegistro.setIdFaixaEstatura(request.getFaixaEstaturaId());
+			newRegistro.setIdGenero(request.getIdGenero());
+			newRegistro.setIdEtnia(request.getIdEtnia());
+			newRegistro.setIdFaixaEtaria(request.getIdFaixaEtaria());
+			newRegistro.setIdFaixaPeso(request.getIdFaixaPeso());
+			newRegistro.setIdFaixaEstatura(request.getIdFaixaEstatura());
 			repository.save(newRegistro);
 			
 			// HTTP 201 (CREATED)
@@ -235,11 +244,11 @@ public class AtorController
 			newRegistro.setDataFalecimento(dataFalecimento);
 			newRegistro.setCidadeNatal(request.getCidadeNatal() + "-" + request.getUF());
 			newRegistro.setImagemFoto(request.getImagemFoto());
-			newRegistro.setIdGenero(request.getGeneroId());
-			newRegistro.setIdEtnia(request.getEtniaId());
-			newRegistro.setIdFaixaEtaria(request.getFaixaEtariaId());
-			newRegistro.setIdFaixaPeso(request.getFaixaPesoId());
-			newRegistro.setIdFaixaEstatura(request.getFaixaEstaturaId());
+			newRegistro.setIdGenero(request.getIdGenero());
+			newRegistro.setIdEtnia(request.getIdEtnia());
+			newRegistro.setIdFaixaEtaria(request.getIdFaixaEtaria());
+			newRegistro.setIdFaixaPeso(request.getIdFaixaPeso());
+			newRegistro.setIdFaixaEstatura(request.getIdFaixaEstatura());
 			newRegistro.setId(request.getId());
 			repository.save(newRegistro);
 			

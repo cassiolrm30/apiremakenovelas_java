@@ -43,15 +43,16 @@ public class VersaoNovela
 	private boolean elencoCompleto;
 
 	@ManyToOne
-	@JoinColumn(name = "idautor", nullable = false)
+	@JoinColumn(name = "id_autor", nullable = false)
 	private Autor autor;
 
 	@ManyToOne
-	@JoinColumn(name = "idversaooriginal", nullable = true)
+	@JoinColumn(name = "id_versao_original", nullable = true)
 	private Novela versaoOriginal;
-	
+
 	public VersaoNovela()
 	{
 		this.setAutor(new Autor());
+		this.setVersaoOriginal(new Novela());
 	}
 }

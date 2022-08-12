@@ -29,40 +29,40 @@ public class Personagem
 	@Column(name = "nome", length = 50, nullable = false)
 	private String nome;
 
-	@Column(name = "idgenero", nullable = false)
+	@Column(name = "id_genero", nullable = false)
 	private Integer idGenero;
 
 	@Column(name = "generoobrig", nullable = false)
 	private boolean generoObrig;
 
-	@Column(name = "idetnia", nullable = false)
+	@Column(name = "id_etnia", nullable = false)
 	private Integer idEtnia;
 	
 	@Column(name = "etniaobrig", nullable = false)
 	private boolean etniaObrig;
 	
-	@Column(name = "idfaixaetaria", nullable = false)
+	@Column(name = "id_faixa_etaria", nullable = false)
 	private Integer idFaixaEtaria;
 	
 	@Column(name = "faixaetariaobrig", nullable = false)
 	private boolean faixaEtariaObrig;
 
-	@Column(name = "idfaixapeso", nullable = false)
+	@Column(name = "id_faixa_peso", nullable = false)
 	private Integer idFaixaPeso;
 	
 	@Column(name = "faixapesoobrig", nullable = false)
 	private boolean faixaPesoObrig;
 	
-	@Column(name = "idfaixaestatura", nullable = false)
+	@Column(name = "id_faixa_estatura", nullable = false)
 	private Integer idFaixaEstatura;
 
 	@Column(name = "faixaestaturaobrig", nullable = false)
 	private boolean faixaEstaturaObrig;
 
 	@ManyToOne
-	@JoinColumn(name = "idnovela", nullable = false)
+	@JoinColumn(name = "id_novela", nullable = false)
 	private Novela novela;
-	
+
 	public Personagem()
 	{
 		this.setNovela(new Novela());

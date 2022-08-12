@@ -12,67 +12,50 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import br.com.apiremakenovelas.entities.Novela;
+import br.com.apiremakenovelas.entities.Personagem;
 import br.com.apiremakenovelas.entities.VersaoNovela;
 
 public interface INovelaRepository extends CrudRepository<Novela, Integer>
 {
-    //public static EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(""); 
-    //public static EntityManager entityManager = entityManagerFactory.createEntityManager();
-
-    @Query("SELECT N FROM Novela N INNER JOIN VersaoNovela V ON V.versaoOriginal.id = N.id INNER JOIN Autor A ON V.autor.id = A.id ORDER BY N.titulo")
+    @Query("SELECT N FROM Novela N")
 	List<Novela> findAll();
 
-	@Query("SELECT N FROM Novela N INNER JOIN VersaoNovela V ON V.versaoOriginal.id = N.id INNER JOIN Autor A ON V.autor.id = A.id WHERE N.id = :param1")
-	Optional<Novela> findById(@Param("param1") int id);
+	@Query("SELECT V FROM VersaoNovela V WHERE V.versaoOriginal.id = :param1 ORDER BY V.dataLancamento")
+	List<VersaoNovela> getVersoes(@Param("param1") int id);
 
-	@Query("SELECT N.id, N.titulo FROM Novela N INNER JOIN Personagem P ON P.novela.id = N.id ORDER BY N.titulo")
-	Optional<Novela> findWithPersonagens();
+	@Query("SELECT P FROM Personagem P WHERE P.novela.id = :param1")
+	List<Personagem> getPersonagens(@Param("param1") int id);
 
 	@Query("SELECT N FROM Novela N INNER JOIN VersaoNovela V ON V.versaoOriginal.id = N.id INNER JOIN Autor A ON V.autor.id = A.id ORDER BY N.titulo")
 	List<String> findRemakes();
 
     @Query("SELECT MAX(N.id) FROM Novela N")
 	Integer getMaxId();
-
+    
     @Modifying
-    @Query(value = "INSERT INTO VersaoNovela (idversaooriginal, datalancamento, qtdcapitulos, imagemlogotipo, elencocompleto, idautor) VALUES (:param1, :param2, :param3, :param4, :param5, :param6)", nativeQuery = true)
+    @Query(value = "INSERT INTO VersaoNovela (id_versao_original, datalancamento, qtdcapitulos, imagemlogotipo, elencocompleto, id_autor) VALUES (:param1, :param2, :param3, :param4, :param5, :param6)", nativeQuery = true)
     @Transactional
     void insertVersoes(@Param("param1") int versaoOriginalId, @Param("param2") Date dataLancamento, @Param("param3") int qtdCapitulos, @Param("param4") String imagemLogotipo, @Param("param5") boolean elencoCompleto, @Param("param6") int autorId);
 
-	/*@Modifying
-    @Transactional
-    static void insertVersoes(@Param("param1") VersaoNovela versao)
-    {
-    	entityManager.getTransaction().begin();
-
-    	entityManager.createQuery("INSERT INTO VersaoNovela (idversaooriginal, datalancamento, qtdcapitulos, imagemlogotipo, elencocompleto, idautor) VALUES (:param1, :param2, :param3, :param4, :param5, :param6)")
-					 .setParameter("param1", versao.getVersaoOriginal().getId())
-					 .setParameter("param2", versao.getDataLancamento())
-					 .setParameter("param3", versao.getQtdCapitulos())
-					 .setParameter("param4", versao.getImagemLogotipo())
-					 .setParameter("param5", false)
-					 .setParameter("param6", versao.getAutor().getId())
-    				 .executeUpdate();
-
-    	entityManager.getTransaction().commit();
-    	entityManager.close();    	
-    }*/
-
     @Modifying
-    @Query(value = "INSERT INTO Personagem (idnovela, nome, idGenero, idEtnia, idFaixaEtaria, idFaixaPeso, idFaixaEstatura) VALUES (:param1, :param2, :param3, :param4, :param5, :param6, :param7)", nativeQuery = true)
+    @Query(value = "INSERT INTO Personagem (id_novela, nome, id_genero, id_etnia, id_faixa_etaria, id_faixa_peso, id_faixa_estatura, generoobrig, etniaobrig, faixaetariaobrig, faixapesoobrig, faixaestaturaobrig) VALUES (:param1, :param2, :param3, :param4, :param5, :param6, :param7, 0, 0, 0, 0, 0)", nativeQuery = true)
     @Transactional
     void insertPersonagens(@Param("param1") int novelaId, @Param("param2") String nome, @Param("param3") int idGenero, @Param("param4") int idEtnia, @Param("param5") int idFaixaEtaria, @Param("param6") int idFaixaPeso, @Param("param7") int idFaixaEstatura);
+    
+    @Modifying
+    @Query(value = "UPDATE VersaoNovela SET id_versao_original = :param1, datalancamento = :param2, qtdcapitulos = :param3, imagemlogotipo = :param4, elencocompleto = :param5, id_autor = :param6 WHERE id = :param7", nativeQuery = true)
+    @Transactional
+    void updateVersoes(@Param("param1") int versaoOriginalId, @Param("param2") Date dataLancamento, @Param("param3") int qtdCapitulos, @Param("param4") String imagemLogotipo, @Param("param5") boolean elencoCompleto, @Param("param6") int autorId, @Param("param7") int id);
 
-	//@Query("UPDATE VersaoNovela SET dataLancamento = :param1, qtdCapitulos = :param2, imagemLogotipo = :param3, autor.id = :param4 WHERE id = :param5")
-	//void updateVersoes(@Param("param1") Date dataLancamento, @Param("param2") int qtdCapitulos, @Param("param3") String imagemLogotipo, @Param("param4") int autorId, @Param("param5") int id);
+    @Modifying
+    @Query(value = "UPDATE Personagem SET id_novela = :param1, nome = :param2, id_genero = :param3, id_etnia = :param4, id_faixa_etaria = :param5, id_faixa_peso = :param6, id_faixa_estatura = :param7 WHERE id = :param8", nativeQuery = true)
+    @Transactional
+    void updatePersonagens(@Param("param1") int novelaId, @Param("param2") String nome, @Param("param3") int idGenero, @Param("param4") int idEtnia, @Param("param5") int idFaixaEtaria, @Param("param6") int idFaixaPeso, @Param("param7") int idFaixaEstatura, @Param("param8") int id);
 
-	//@Query("UPDATE Personagem SET nome = :param1, idGenero = :param2, idEtnia = :param3, idFaixaEtaria = :param4, idFaixaPeso = :param5, idFaixaEstatura = :param6 WHERE id = :param7")
-	//void updatePersonagens(@Param("param1") String nome, @Param("param2") int idGenero, @Param("param3") int idEtnia, @Param("param4") int idFaixaEtaria, @Param("param5") int idFaixaPeso, @Param("param6") int idFaixaEstatura, @Param("param7") int id);
-
-	@Query("DELETE FROM VersaoNovela WHERE idversaooriginal = :param1")
+	@Query("DELETE FROM VersaoNovela WHERE id_versao_original = :param1")
 	void deleteVersoes(@Param("param1") int id);
 
-	@Query("DELETE FROM Personagem WHERE idnovela = :param1")
+	@Query("DELETE FROM Personagem WHERE id_novela = :param1")
 	void deletePersonagens(@Param("param1") int id);
 }
 

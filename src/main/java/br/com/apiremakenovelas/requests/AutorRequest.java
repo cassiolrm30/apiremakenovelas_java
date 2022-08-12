@@ -14,7 +14,7 @@ import lombok.ToString;
 public class AutorRequest
 {
 	private int id;
-	private int generoId;
+	private int idGenero;
 	private String nomeCompleto;
 	private String nomeArtistico;
 	private String dataNascimento;

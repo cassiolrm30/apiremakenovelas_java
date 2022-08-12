@@ -14,7 +14,7 @@ import lombok.ToString;
 public class AtorRequest
 {
 	private int id;
-	private int generoId, etniaId, faixaEtariaId, faixaPesoId, faixaEstaturaId;
+	private int idGenero, idEtnia, idFaixaEtaria, idFaixaPeso, idFaixaEstatura;
 	private String nomeCompleto;
 	private String nomeArtistico;
 	private String dataNascimento;

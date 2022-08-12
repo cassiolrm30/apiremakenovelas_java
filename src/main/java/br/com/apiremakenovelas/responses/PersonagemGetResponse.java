@@ -15,7 +15,7 @@ public class PersonagemGetResponse
 {
 	private int id;
 	private String nome;
-	private int Idgenero, Idetnia, Idfaixaetaria, Idfaixapeso, Idfaixaestatura, Idnovela;
+	private int idGenero, idEtnia, idFaixaEtaria, idFaixaPeso, idFaixaEstatura, idNovela;
 	private boolean generoObrig, etniaObrig, faixaEtariaObrig, faixaPesoObrig, faixaEstaturaObrig;
 	private int[] atoresIds;
 }

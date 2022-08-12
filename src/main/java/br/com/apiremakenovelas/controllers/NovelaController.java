@@ -1,13 +1,8 @@
 package br.com.apiremakenovelas.controllers;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,7 +25,6 @@ import br.com.apiremakenovelas.enums.Genero;
 import br.com.apiremakenovelas.requests.NovelaRequest;
 import br.com.apiremakenovelas.responses.NovelaGetResponse;
 import br.com.apiremakenovelas.responses.RemakeGetResponse;
-import br.com.apiremakenovelas.repositories.IAtorRepository;
 import br.com.apiremakenovelas.repositories.IAutorRepository;
 import br.com.apiremakenovelas.repositories.INovelaRepository;
 import br.com.apiremakenovelas.repositories.IPersonagemRepository;
@@ -43,7 +37,6 @@ public class NovelaController
 {
 	@Autowired
 	private INovelaRepository novelaRepository;
-	private IAtorRepository atorRepository;
 	private IVersaoNovelaRepository versaoNovelaRepository;
 	private IPersonagemRepository personagemRepository;
 	private IAutorRepository autorRepository;
@@ -62,11 +55,20 @@ public class NovelaController
 			// consultando os registros existentes no banco de dados
 			for (Novela registro : novelaRepository.findAll())
 			{
+				var versoes = registro.getVersoes().toArray();
 				NovelaGetResponse response = new NovelaGetResponse();
 				response.setId(registro.getId());
 				response.setTitulo(registro.getTitulo().toUpperCase());
-				response.setAutorOriginal("");
-				response.setAutorAtual("");
+				if (versoes.length > 0)
+				{
+					Autor autorOriginal = ((VersaoNovela)versoes[0]).getAutor();
+					response.setAutorOriginal(autorOriginal == null ? "-" : autorOriginal.getNomeArtistico().toUpperCase());
+					if (versoes.length > 1)
+					{
+						Autor autorAtual = ((VersaoNovela)versoes[versoes.length-1]).getAutor();
+						response.setAutorAtual(autorAtual == null ? "-" : autorAtual.getNomeArtistico().toUpperCase());
+					}
+				}
 				lista.add(response);
 			}
 
@@ -85,20 +87,19 @@ public class NovelaController
 	@RequestMapping(value = "/api/novela/{id}", method = RequestMethod.GET)
 	public ResponseEntity<NovelaGetResponse> get(@PathVariable int id)
 	{
-		try
+		try	
 		{
 			NovelaGetResponse resultado = new NovelaGetResponse();
 			Optional<Novela> novelaRepositoryAux = novelaRepository.findById(id);
-			if (novelaRepositoryAux != null)
+			if (novelaRepositoryAux.isPresent())
 			{
 				Novela registro = novelaRepositoryAux.get();
-				NovelaGetResponse response = new NovelaGetResponse();
 	            String dadosVersoes = "", dadosPersonagens = "";
-				response.setId(id);
-				response.setTitulo(registro.getTitulo().toUpperCase());
-				response.setSinopse(registro.getSinopse());
+	            resultado.setId(id);
+	            resultado.setTitulo(registro.getTitulo().toUpperCase());
+				resultado.setSinopse(registro.getSinopse());
 
-				List<VersaoNovela> versoes = registro.getVersoes();
+				List<VersaoNovela> versoes = novelaRepository.getVersoes(id);
 				int indice = 1;
 				for (VersaoNovela item : versoes)
 				{
@@ -106,14 +107,17 @@ public class NovelaController
 	            	dadosVersoes += item.getAutor().getNomeArtistico().toUpperCase() + separador;
 	            	dadosVersoes += simpleDateFormatMySQL.format(item.getDataLancamento()) + separador;
 	            	dadosVersoes += item.getQtdCapitulos().toString() + separador;
-	            	dadosVersoes += item.getId().toString();
-	                if (indice < versoes.size())
-	                    dadosVersoes += separador + separador;
+	            	dadosVersoes += item.getId().toString() + separador + separador;
+	                if (indice == 1)
+	            		resultado.setAutorOriginal(item.getAutor().getNomeArtistico().toUpperCase());
+	                else
+	                	resultado.setAutorAtual(item.getAutor().getNomeArtistico().toUpperCase());	                	
 	                indice++;
 	            }
-				response.setDadosVersoes(dadosVersoes);
+            	dadosVersoes = dadosVersoes.substring(0, dadosVersoes.length()-2);
+				resultado.setDadosVersoes(dadosVersoes);
 
-				List<Personagem> personagens = registro.getPersonagens();
+				List<Personagem> personagens = novelaRepository.getPersonagens(id);
 				for (Personagem item : personagens)
 	            {
 	                dadosPersonagens += item.getNome() + separador;
@@ -157,12 +161,11 @@ public class NovelaController
 	                		break;
 	                	}
 	                }
-	                dadosPersonagens += item.getId().toString();
-	                if (indice < personagens.size())
-	                    dadosVersoes += separador + separador;
+	                dadosPersonagens += item.getId().toString() + separador + separador;
 	                indice++;
 	            }
-				response.setDadosPersonagens(dadosPersonagens);
+				dadosPersonagens = dadosPersonagens.substring(0, dadosPersonagens.length()-2);
+				resultado.setDadosPersonagens(dadosPersonagens);
 			}
 
 			// HTTP 200 (OK)
@@ -204,7 +207,7 @@ public class NovelaController
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}		
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation("Endpoint para consulta de personagens de uma novela com intérpretes anteriores e atuais.")
 	@RequestMapping(value = "/api/novela/get_personagens/{id}", method = RequestMethod.GET)
@@ -293,11 +296,11 @@ public class NovelaController
             for (String[] item : dadosVersoes)
             {
                 var versao = new VersaoNovela();
+                versao.getAutor().setId(Integer.parseInt(item[1]));
                 versao.setDataLancamento(simpleDateFormatMySQL.parse(item[2]));
                 versao.setQtdCapitulos(Integer.parseInt(item[3]));
                 versao.setImagemLogotipo("");
                 versao.setElencoCompleto(false);
-                versao.getAutor().setId(Integer.parseInt(item[1]));
                 versao.setVersaoOriginal(newRegistro);
                 novelaRepository.insertVersoes(versao.getVersaoOriginal().getId(), versao.getDataLancamento(), versao.getQtdCapitulos(), versao.getImagemLogotipo(), false, versao.getAutor().getId());
             }
@@ -313,9 +316,14 @@ public class NovelaController
                 personagem.setIdFaixaEtaria(Integer.parseInt(item[3]));
                 personagem.setIdFaixaPeso(Integer.parseInt(item[4]));
                 personagem.setIdFaixaEstatura(Integer.parseInt(item[5]));
+                personagem.setGeneroObrig(false);
+                personagem.setEtniaObrig(false);
+                personagem.setFaixaEtariaObrig(false);
+                personagem.setFaixaPesoObrig(false);
+                personagem.setFaixaEstaturaObrig(false);
                 novelaRepository.insertPersonagens(personagem.getNovela().getId(), personagem.getNome(), personagem.getIdGenero(), personagem.getIdEtnia(), personagem.getIdFaixaEtaria(), personagem.getIdFaixaPeso(), personagem.getIdFaixaEstatura());
             }
-			
+
 			// HTTP 201 (CREATED)
 			return ResponseEntity.status(HttpStatus.CREATED).body("Dados salvos com sucesso.");
 		}
@@ -344,50 +352,48 @@ public class NovelaController
 
 	        // capturando e salvando os dados
 			Novela newRegistro = oldRegistro.get();
+			newRegistro.setId(request.getId());
 			newRegistro.setTitulo(request.getTitulo());
 			newRegistro.setSinopse(request.getSinopse());
-			newRegistro.setId(request.getId());
+			novelaRepository.save(newRegistro);
 
             var dadosVersoes = request.getDadosVersoes();
             for (String[] item : dadosVersoes)
             {
-                //String[] dadosItem = item.split("|");
-    			Optional<Autor> autor = autorRepository.findById(Integer.parseInt(item[1]));
-                if (autor != null)
-                {
-                    var versao = new VersaoNovela();
-                    versao.setAutor(autor.get());
-                    versao.setId(Integer.parseInt(item[4]));
-                    //versao.setDataLancamento(Date.parse(dadosItem[2]));
-                    versao.setQtdCapitulos(Integer.parseInt(item[3]));
-                    versao.setVersaoOriginal(newRegistro);
-                    newRegistro.getVersoes().add(versao);
-                }
+                var versao = new VersaoNovela();
+                versao.getAutor().setId(Integer.parseInt(item[1]));
+                versao.setDataLancamento(simpleDateFormatMySQL.parse(item[2]));
+                versao.setQtdCapitulos(Integer.parseInt(item[3]));
+                versao.setImagemLogotipo("");
+                versao.setElencoCompleto(false);
+                versao.setVersaoOriginal(newRegistro);
+                if (item[4].equals(""))
+                	novelaRepository.insertVersoes(versao.getVersaoOriginal().getId(), versao.getDataLancamento(), versao.getQtdCapitulos(), versao.getImagemLogotipo(), false, versao.getAutor().getId());
+                else
+                	novelaRepository.updateVersoes(versao.getVersaoOriginal().getId(), versao.getDataLancamento(), versao.getQtdCapitulos(), versao.getImagemLogotipo(), false, versao.getAutor().getId(), Integer.parseInt(item[4]));
             }
 
             var dadosPersonagens = request.getDadosPersonagens();
             for (String[] item : dadosPersonagens)
             {
-                //String[] dadosItem = item.split("|");
-                /*int[] idsPerfis = await _repositorioPerfil.GetPerfisByDescription(dadosItem[1], dadosItem[2], dadosItem[3], dadosItem[4], dadosItem[5]);
-                var personagem = new Personagem()
-                {
-                    Id = int.Parse(dadosItem[6]),  Nome = dadosItem[0],
-                    GeneroId = idsPerfis[0], EtniaId = idsPerfis[1],
-                    FaixaEtariaId = idsPerfis[2], FaixaPesoId = idsPerfis[3],
-                    FaixaEstaturaId = idsPerfis[4], NovelaId = model.Id
-                };*/
                 var personagem = new Personagem();
                 personagem.setNome(item[0]);
                 personagem.setNovela(newRegistro);
-                personagem.setIdGenero(Integer.parseInt(item[0]));
-                personagem.setIdEtnia(Integer.parseInt(item[1]));
-                personagem.setIdFaixaEtaria(Integer.parseInt(item[2]));
-                personagem.setIdFaixaPeso(Integer.parseInt(item[3]));
-                personagem.setIdFaixaEstatura(Integer.parseInt(item[4]));
-                newRegistro.getPersonagens().add(personagem);
+                personagem.setIdGenero(Integer.parseInt(item[1]));
+                personagem.setIdEtnia(Integer.parseInt(item[2]));
+                personagem.setIdFaixaEtaria(Integer.parseInt(item[3]));
+                personagem.setIdFaixaPeso(Integer.parseInt(item[4]));
+                personagem.setIdFaixaEstatura(Integer.parseInt(item[5]));
+                personagem.setGeneroObrig(false);
+                personagem.setEtniaObrig(false);
+                personagem.setFaixaEtariaObrig(false);
+                personagem.setFaixaPesoObrig(false);
+                personagem.setFaixaEstaturaObrig(false);                
+                if (item[6].equals(""))
+                    novelaRepository.insertPersonagens(personagem.getNovela().getId(), personagem.getNome(), personagem.getIdGenero(), personagem.getIdEtnia(), personagem.getIdFaixaEtaria(), personagem.getIdFaixaPeso(), personagem.getIdFaixaEstatura());
+                else
+                	novelaRepository.updatePersonagens(personagem.getNovela().getId(), personagem.getNome(), personagem.getIdGenero(), personagem.getIdEtnia(), personagem.getIdFaixaEtaria(), personagem.getIdFaixaPeso(), personagem.getIdFaixaEstatura(), Integer.parseInt(item[6]));
             }
-            novelaRepository.save(newRegistro);
 
         	// HTTP 200 (OK)
 			return ResponseEntity.status(HttpStatus.OK).body("Dados salvos com sucesso.");
@@ -403,20 +409,38 @@ public class NovelaController
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
 	}
-	
+
 	@CrossOrigin
 	@ApiOperation("Endpoint para exclusão de novelas e suas associações.")
 	@RequestMapping(value = "/api/novela/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<String> delete(@PathVariable(value = "id") Integer id)
+	public ResponseEntity<String> delete(@PathVariable int id)
 	{
 		try
 		{
-			Optional<Novela> registro = novelaRepository.findById(id);
-			if (!registro.isPresent())
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Registro não encontrado.");
-			novelaRepository.deletePersonagens(id);
-			novelaRepository.deleteVersoes(id);			
-			novelaRepository.delete(registro.get());
+			//Optional<Novela> novelaRepositoryAux = novelaRepository.findById(id);
+			//if (!novelaRepositoryAux.isPresent())
+			//	return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Registro não encontrado.");
+			//var registro = novelaRepositoryAux.get();
+			var registro = new Novela();
+            //registro.setPersonagens(novelaRepository.getPersonagens(id));
+			var x = novelaRepository.getPersonagens(id).toArray();
+			for (int i = 0; i < x.length; i++)
+			{
+	            personagemRepository.delete((Personagem)x[i]);
+	        }
+			//var y = registro.getVersoes().toArray();
+			var y = novelaRepository.getVersoes(id).toArray();
+			for (int i = 0; i < y.length; i++)
+			{
+				novelaRepository.deleteVersoes(((VersaoNovela)y[i]).getId());
+	        }
+            //for (Personagem item : registro.getPersonagens())
+            //	personagemRepository.delete(item);
+            //for (Personagem item : registro.getPersonagens())
+            //	novelaRepository.deletePersonagens(item.getId());
+            //for (VersaoNovela item : registro.getVersoes())
+            //	novelaRepository.deleteVersoes(item.getId());
+			novelaRepository.delete(registro);
 
 			// HTTP 200 (OK)
 			return ResponseEntity.status(HttpStatus.OK).body("Dados excluídos com sucesso.");	

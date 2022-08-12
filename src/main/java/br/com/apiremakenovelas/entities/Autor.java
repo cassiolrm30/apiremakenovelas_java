@@ -6,10 +6,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import br.com.apiremakenovelas.enums.Genero;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -52,7 +55,7 @@ public class Autor
 	@Column(name = "imagemfoto", nullable = true)
 	private String imagemFoto;
 
-	@JoinColumn(name = "idgenero", nullable = false)
+	@JoinColumn(name = "id_genero", nullable = false)
 	private Integer idGenero;
 
 	@OneToMany(mappedBy = "autor")

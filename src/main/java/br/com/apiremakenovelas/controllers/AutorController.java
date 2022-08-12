@@ -49,12 +49,10 @@ public class AutorController
 				response.setNomeCompleto(registro.getNomeCompleto());
 				response.setNomeArtistico(registro.getNomeArtistico().toUpperCase());
 				response.setDataNascimento(simpleDateFormatBR.format(registro.getDataNascimento()));
-				//if (registro.getDataFalecimento() != null && !simpleDateFormatBR.format(registro.getDataFalecimento()).equals(dataMinima))
-				//	response.setDataFalecimento(simpleDateFormatBR.format(registro.getDataFalecimento()));
 				response.setCidadeNatal(dadosCidadeNatal[0]);
 				response.setUF(dadosCidadeNatal[1]);
     			response.setImagemFoto(registro.getImagemFoto());
-				response.setGeneroId(registro.getIdGenero());
+				response.setIdGenero(registro.getIdGenero());
 				lista.add(response);
 			}
 
@@ -85,12 +83,10 @@ public class AutorController
 	            resultado.setNomeCompleto(registro.getNomeCompleto());
 	            resultado.setNomeArtistico(registro.getNomeArtistico());
 	            resultado.setDataNascimento(simpleDateFormatMySQL.format(registro.getDataNascimento()));
-				//if (registro.getDataFalecimento() != null && !simpleDateFormatMySQL.format(registro.getDataFalecimento()).equals(dataMinima))
-				//	resultado.setDataFalecimento(simpleDateFormatMySQL.format(registro.getDataFalecimento()));
 				resultado.setCidadeNatal(dadosCidadeNatal[0].trim());
 				resultado.setUF(dadosCidadeNatal[1].trim());
 				resultado.setImagemFoto(registro.getImagemFoto());
-				resultado.setGeneroId(registro.getIdGenero());
+				resultado.setIdGenero(registro.getIdGenero());
 	            //String nomeArquivo = "";
                 //String caminhoArquivo = "C:\\Users\\cassi\\Desktop\\SistemaRemakeNovelas - FRONT-END\\JAVA\\imagens\\atores\\";
 	            //if (registro.ImagemFoto != null)
@@ -142,7 +138,7 @@ public class AutorController
 			newRegistro.setDataFalecimento(dataFalecimento);
 			newRegistro.setCidadeNatal(request.getCidadeNatal() + "-" + request.getUF());
 			newRegistro.setImagemFoto(request.getImagemFoto());
-			newRegistro.setIdGenero(request.getGeneroId());
+			newRegistro.setIdGenero(request.getIdGenero());
 			repository.save(newRegistro);
 			
 			// HTTP 201 (CREATED)
@@ -181,7 +177,7 @@ public class AutorController
 			newRegistro.setDataFalecimento(dataFalecimento);
 			newRegistro.setCidadeNatal(request.getCidadeNatal() + "-" + request.getUF());
 			newRegistro.setImagemFoto(request.getImagemFoto());
-			newRegistro.setIdGenero(request.getGeneroId());
+			newRegistro.setIdGenero(request.getIdGenero());
 			newRegistro.setId(request.getId());
 			repository.save(newRegistro);
 

@@ -17,7 +17,7 @@ public class VersaoNovelaGetResponse
 	private String dataNascimento;
 	private int qtdCapitulos;
 	private String imagemLogotipo;
-	private int autorId;
-	private int versaoOriginalId;
+	private int idAutor;
+	private int idVersaoOriginal;
 	private boolean elencoCompleto;
 }
