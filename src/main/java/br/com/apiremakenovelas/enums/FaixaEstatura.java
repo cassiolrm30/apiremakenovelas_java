@@ -1,5 +1,7 @@
 package br.com.apiremakenovelas.enums;
 
+import java.text.DecimalFormat;
+
 public enum FaixaEstatura
 {
 	Abaixo_de_110_Cm(1, 1, 110),
@@ -15,6 +17,7 @@ public enum FaixaEstatura
 
 	private final int id;
 	private final double estaturaMinima, estaturaMaxima;
+	private static final DecimalFormat formato = new DecimalFormat("0.00");
 
 	FaixaEstatura(int id, double estaturaMinima, double estaturaMaxima)
 	{
@@ -31,10 +34,10 @@ public enum FaixaEstatura
 
 	public String getDescricao()
 	{
-		Double _valorMinimo = this.getValorMinimo();
-		Double _valorMaximo = this.getValorMaximo();
-		if (_valorMinimo == Integer.MIN_VALUE) return "Abaixo de " + _valorMaximo.toString() + " Anos"; 
-		if (_valorMaximo == Integer.MAX_VALUE) return "Acima de " + _valorMinimo.toString() + " Anos"; 
-		return "De " + _valorMinimo.toString() + " a " + _valorMaximo.toString() + " cm";
+		Double _valorMinimo = (this.getValorMinimo() / 100);
+		Double _valorMaximo = (this.getValorMaximo() / 100);
+		if (_valorMinimo == 0.01) return "Abaixo de " + formato.format(_valorMaximo + 0.01) + " m";
+		if (_valorMaximo == 2.00) return "Acima de " + formato.format(_valorMinimo - 0.01) + " m"; 
+		return "De " + formato.format(_valorMinimo) + " m até " + formato.format(_valorMaximo) + " m";
 	}
 }

@@ -1,5 +1,7 @@
 package br.com.apiremakenovelas.enums;
 
+import java.text.DecimalFormat;
+
 public enum FaixaPeso
 {
 	Abaixo_de_10_Kg(1, 1, 10),
@@ -15,6 +17,7 @@ public enum FaixaPeso
 
 	private final int id;
 	private final double pesoMinimo, pesoMaximo;
+	private static final DecimalFormat formato = new DecimalFormat("0");
 	
 	FaixaPeso(int id, double pesoMinimo, double pesoMaximo)
 	{
@@ -33,8 +36,8 @@ public enum FaixaPeso
 	{
 		Double _valorMinimo = this.getValorMinimo();
 		Double _valorMaximo = this.getValorMaximo();
-		if (_valorMinimo == Integer.MIN_VALUE) return "Abaixo de " + _valorMaximo.toString() + " Anos"; 
-		if (_valorMaximo == Integer.MAX_VALUE) return "Acima de " + _valorMinimo.toString() + " Anos"; 
-		return "De " + _valorMinimo.toString() + " a " + _valorMaximo.toString() + " kg";
+		if (_valorMinimo == 1) return "Abaixo de " + formato.format(_valorMaximo + 1) + " kg";
+		if (_valorMaximo == 100) return "Acima de " + formato.format(_valorMinimo - 1) + " kg"; 
+		return "De " + formato.format(_valorMinimo) + " kg até " + formato.format(_valorMaximo) + " kg";
 	}
 }

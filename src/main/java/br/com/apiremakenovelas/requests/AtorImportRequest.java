@@ -1,4 +1,4 @@
-package br.com.apiremakenovelas.responses;
+package br.com.apiremakenovelas.requests;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,18 +10,13 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class AtorGetResponse
+public class AtorImportRequest
 {
-	private int id;
-	private int idGenero, idEtnia, idFaixaEtaria, idFaixaPeso, idFaixaEstatura;
-	private String nomeCompleto;
 	private String nomeArtistico;
+	private String nomeCompleto;
 	private String dataNascimento;
 	private String dataFalecimento;
 	private String UF;
 	private String cidadeNatal;
-	private String imagemUpload;
-	private String imagemFoto;
-	private String[] nomesArtisticos;
-	private String perfil;
+	private String perfil; //	"1|2|1|10|8"
 }

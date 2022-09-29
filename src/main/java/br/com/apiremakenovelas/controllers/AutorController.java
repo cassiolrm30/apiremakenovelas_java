@@ -1,5 +1,4 @@
 package br.com.apiremakenovelas.controllers;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,9 +14,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import br.com.apiremakenovelas.entities.Ator;
 import br.com.apiremakenovelas.entities.Autor;
+import br.com.apiremakenovelas.entities.Novela;
+import br.com.apiremakenovelas.entities.VersaoNovela;
+import br.com.apiremakenovelas.requests.AtorImportRequest;
+import br.com.apiremakenovelas.requests.AutorImportRequest;
 import br.com.apiremakenovelas.requests.AutorRequest;
 import br.com.apiremakenovelas.responses.AutorGetResponse;
+import br.com.apiremakenovelas.responses.ImportacaoGetResponse;
 import br.com.apiremakenovelas.repositories.IAutorRepository;
 import io.swagger.annotations.ApiOperation;
 
@@ -37,7 +43,7 @@ public class AutorController
 	public ResponseEntity<List<AutorGetResponse>> get()
 	{	
 		try
-		{	
+		{
 			List<AutorGetResponse> lista = new ArrayList<AutorGetResponse>();
 
 			// consultando os registros existentes no banco de dados
@@ -51,7 +57,7 @@ public class AutorController
 				response.setDataNascimento(simpleDateFormatBR.format(registro.getDataNascimento()));
 				response.setCidadeNatal(dadosCidadeNatal[0]);
 				response.setUF(dadosCidadeNatal[1]);
-    			response.setImagemFoto(registro.getImagemFoto());
+				response.setImagemFoto(getCaminhoArquivo(registro.getImagemFoto()));
 				response.setIdGenero(registro.getIdGenero());
 				lista.add(response);
 			}
@@ -85,7 +91,7 @@ public class AutorController
 	            resultado.setDataNascimento(simpleDateFormatMySQL.format(registro.getDataNascimento()));
 				resultado.setCidadeNatal(dadosCidadeNatal[0].trim());
 				resultado.setUF(dadosCidadeNatal[1].trim());
-				resultado.setImagemFoto(registro.getImagemFoto());
+				resultado.setImagemFoto(getCaminhoArquivo(registro.getImagemFoto()));
 				resultado.setIdGenero(registro.getIdGenero());
 	            //String nomeArquivo = "";
                 //String caminhoArquivo = "C:\\Users\\cassi\\Desktop\\SistemaRemakeNovelas - FRONT-END\\JAVA\\imagens\\atores\\";
@@ -104,11 +110,27 @@ public class AutorController
 	                    fRead.Close();
 	                }*/
 	            //}
-	            String itensAutores = "";
-    			for (Autor item : repository.findAll())
-    				itensAutores += item.getNomeArtistico().toUpperCase() + "|";
-    			String[] nomesArtisticos = (itensAutores.substring(0, itensAutores.length() - 1)).split("|");
+				var listaOutrosAutores = repository.findAll();
+    			String[] nomesArtisticos = new String[listaOutrosAutores.size()];
+    			int indice;
+    			indice = 0;
+    			for (Autor item : listaOutrosAutores)
+    			{
+    				if (!item.getNomeArtistico().toUpperCase().equals(registro.getNomeArtistico().toUpperCase()))
+    					nomesArtisticos[indice] = item.getNomeArtistico().toUpperCase();
+    				indice++;
+    			}
     			resultado.setNomesArtisticos(nomesArtisticos);
+
+    			var listaNovelasDoAutor = repository.findNovelas(id);
+    			String[] dadosVersoesNovelas = new String[listaNovelasDoAutor.size()];
+    			indice = 0;
+    			for (String item : listaNovelasDoAutor)
+    			{
+    				dadosVersoesNovelas[indice] = item;
+    				indice++;
+    			}
+    			resultado.setVersoesNovelas(dadosVersoesNovelas);
 			}
 
 			// HTTP 200 (OK)
@@ -120,6 +142,28 @@ public class AutorController
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
+
+	public String getCaminhoArquivo(@PathVariable String nomeArquivo)
+    {
+        String resultado = "";
+        //String caminhoArquivo = "C:\\Users\\cassi\\Desktop\\SistemaRemakeNovelas - FRONT-END\\JAVA\\imagens\\autores\\";
+        //if (registro.ImagemFoto != null)
+        //{
+            //resultado = registro.getNomeArtistico().replace(" ", "_").toUpperCase().replace("'", "").toUpperCase() + ".jpg";
+            //caminhoArquivo += resultado;
+            /*if (System.IO.File.Exists(caminhoArquivo))
+            {
+                FileStream fRead = new FileStream(caminhoArquivo, FileMode.Open);
+                int length = fRead.ReadByte();
+                byte[] readBytes = new byte[length];
+                fRead.Read(readBytes, 0, readBytes.Length);
+                foreach (var item in fRead.Name.Split("\\"))
+                    resultado = item;
+                fRead.Close();
+            }*/
+        //}
+		return resultado;
+    }
 
 	@CrossOrigin
 	@ApiOperation("Endpoint para cadastro de autores.")
@@ -206,6 +250,9 @@ public class AutorController
 			Optional<Autor> registro = repository.findById(id);
 			if (!registro.isPresent())
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Registro não encontrado.");
+			//int qtNovelas = registro.get().getVersoesNovelas().size();
+			//if (qtNovelas > 0)
+			//	return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Autor possui associação a novelas.");
 			repository.delete(registro.get());
 
 			// HTTP 200 (OK)
@@ -219,7 +266,73 @@ public class AutorController
 		catch (Exception e)
 		{
 			// HTTP 500 (SERVER ERROR) -> INTERNAL SERVER ERROR
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+			String mensagem = e.getMessage();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mensagem);
+		}
+	}
+
+	@CrossOrigin
+	@ApiOperation("Endpoint para importação de dados de atores.")
+	@RequestMapping(value = "/api/autor/importar", method = RequestMethod.PUT)
+	public ResponseEntity<ImportacaoGetResponse> importar(@RequestBody AutorImportRequest[] dadosImportacao)
+	{
+		ImportacaoGetResponse resultado = new ImportacaoGetResponse();
+		int qtdInserts = 0, qtdUpdates = 0;
+		try
+		{
+			for (AutorImportRequest item : dadosImportacao)
+			{
+				if ((item.getNomeArtistico() != "" && item.getNomeArtistico() != null) && (item.getDataNascimento() != "" && item.getDataNascimento() != null))
+				{
+		        	Autor newRegistro = new Autor();
+					Optional<Autor> oldRegistro = repository.findByNomeArtistico(item.getNomeArtistico());
+					if (!oldRegistro.isPresent())
+					{
+						newRegistro.setId(0);
+						qtdInserts++;
+					}
+					else
+					{
+						newRegistro = oldRegistro.get();
+						newRegistro.setId(oldRegistro.get().getId());
+						qtdUpdates++;
+					}
+					Date dataNascimento = simpleDateFormatMySQL.parse(item.getDataNascimento());
+					Date dataFalecimento = simpleDateFormatMySQL.parse((item.getDataFalecimento() == null ? dataMinima : item.getDataFalecimento()));
+					newRegistro.setNomeCompleto(item.getNomeCompleto().trim().equals("") ? item.getNomeArtistico().trim() : item.getNomeCompleto().trim());
+					newRegistro.setNomeArtistico(item.getNomeArtistico().trim());
+					newRegistro.setDataNascimento(dataNascimento);
+					newRegistro.setDataFalecimento(dataFalecimento);
+					newRegistro.setCidadeNatal((item.getCidadeNatal() + "-" + item.getUF()).toUpperCase());
+					newRegistro.setIdGenero(item.getIdGenero());
+					repository.save(newRegistro);
+				}
+			}
+
+			// HTTP 201 (CREATED)
+			resultado.setMensagem("Dados importados com sucesso.");
+			resultado.setQtdRegistros(dadosImportacao.length);
+			resultado.setQtdCadastros(qtdInserts);
+			resultado.setQtdAtualizacoes(qtdUpdates);
+			return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
+		}
+		catch(IllegalArgumentException e)
+		{
+			// HTTP 400 (CLIENT ERROR) -> BAD REQUEST
+			resultado.setMensagem(e.getMessage());
+			resultado.setQtdRegistros(0);
+			resultado.setQtdCadastros(0);
+			resultado.setQtdAtualizacoes(0);
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultado);
+		}
+		catch(Exception e)
+		{			
+			// HTTP 500 (SERVER ERROR) -> INTERNAL SERVER ERROR
+			resultado.setMensagem(e.getMessage());
+			resultado.setQtdRegistros(0);
+			resultado.setQtdCadastros(0);
+			resultado.setQtdAtualizacoes(0);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resultado);
 		}
 	}
 }

@@ -1,5 +1,4 @@
 package br.com.apiremakenovelas.controllers;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,8 +20,10 @@ import br.com.apiremakenovelas.enums.Etnia;
 import br.com.apiremakenovelas.enums.FaixaEtaria;
 import br.com.apiremakenovelas.enums.FaixaPeso;
 import br.com.apiremakenovelas.enums.FaixaEstatura;
+import br.com.apiremakenovelas.requests.AtorImportRequest;
 import br.com.apiremakenovelas.requests.AtorRequest;
 import br.com.apiremakenovelas.responses.AtorGetResponse;
+import br.com.apiremakenovelas.responses.ImportacaoGetResponse;
 import br.com.apiremakenovelas.repositories.IAtorRepository;
 import io.swagger.annotations.ApiOperation;
 
@@ -32,9 +33,10 @@ public class AtorController
 {
 	@Autowired
 	private IAtorRepository repository;
-	private String dataMinima = "0001-01-01";
-	SimpleDateFormat simpleDateFormatBR = new SimpleDateFormat("dd/MM/yyyy");
-	SimpleDateFormat simpleDateFormatMySQL = new SimpleDateFormat("yyyy-MM-dd");
+	private final String dataMinima = "0001-01-01";
+	private final SimpleDateFormat simpleDateFormatBR = new SimpleDateFormat("dd/MM/yyyy");
+	private final SimpleDateFormat simpleDateFormatMySQL = new SimpleDateFormat("yyyy-MM-dd");
+    private final String separador = "|";
 	
 	@CrossOrigin
 	@ApiOperation("Endpoint para consulta de atores.")
@@ -291,6 +293,76 @@ public class AtorController
 		{
 			// HTTP 500 (SERVER ERROR) -> INTERNAL SERVER ERROR
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+		}
+	}
+
+	@CrossOrigin
+	@ApiOperation("Endpoint para importação de dados de atores.")
+	@RequestMapping(value = "/api/ator/importar", method = RequestMethod.PUT)
+	public ResponseEntity<ImportacaoGetResponse> importar(@RequestBody AtorImportRequest[] dadosImportacao)
+	{
+		ImportacaoGetResponse resultado = new ImportacaoGetResponse();
+		int qtdInserts = 0, qtdUpdates = 0;
+		try
+		{
+			for (AtorImportRequest item : dadosImportacao)
+			{
+				if ((item.getNomeArtistico() != "" && item.getNomeArtistico() != null) && (item.getDataNascimento() != "" && item.getDataNascimento() != null))
+				{
+					String[] perfil = (item.getPerfil().replace(separador, " ")).split(" ");
+					Optional<Ator> oldRegistro = repository.findByNomeArtistico(item.getNomeArtistico());
+		        	Ator newRegistro = new Ator();
+					if (!oldRegistro.isPresent())
+					{
+						newRegistro.setId(0);
+						qtdInserts++;
+					}
+					else
+					{
+						newRegistro = oldRegistro.get();
+						newRegistro.setId(oldRegistro.get().getId());
+						qtdUpdates++;
+					}
+					Date dataNascimento = simpleDateFormatMySQL.parse(item.getDataNascimento());
+					Date dataFalecimento = simpleDateFormatMySQL.parse((item.getDataFalecimento() == null ? dataMinima : item.getDataFalecimento()));
+					newRegistro.setNomeCompleto(item.getNomeCompleto().trim().equals("") ? item.getNomeArtistico().trim() : item.getNomeCompleto().trim());
+					newRegistro.setNomeArtistico(item.getNomeArtistico().trim());
+					newRegistro.setDataNascimento(dataNascimento);
+					newRegistro.setDataFalecimento(dataFalecimento);
+					newRegistro.setCidadeNatal((item.getCidadeNatal() + "-" + item.getUF()).toUpperCase());
+					newRegistro.setIdGenero(Integer.parseInt(perfil[0]));
+					newRegistro.setIdEtnia(Integer.parseInt(perfil[1]));
+					newRegistro.setIdFaixaEtaria(Integer.parseInt(perfil[2]));
+					newRegistro.setIdFaixaPeso(Integer.parseInt(perfil[3]));
+					newRegistro.setIdFaixaEstatura(Integer.parseInt(perfil[4]));
+					repository.save(newRegistro);
+				}
+			}
+
+			// HTTP 201 (CREATED)
+			resultado.setMensagem("Dados importados com sucesso.");
+			resultado.setQtdRegistros(dadosImportacao.length);
+			resultado.setQtdCadastros(qtdInserts);
+			resultado.setQtdAtualizacoes(qtdUpdates);
+			return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
+		}
+		catch(IllegalArgumentException e)
+		{
+			// HTTP 400 (CLIENT ERROR) -> BAD REQUEST
+			resultado.setMensagem(e.getMessage());
+			resultado.setQtdRegistros(0);
+			resultado.setQtdCadastros(0);
+			resultado.setQtdAtualizacoes(0);
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultado);
+		}
+		catch(Exception e)
+		{			
+			// HTTP 500 (SERVER ERROR) -> INTERNAL SERVER ERROR
+			resultado.setMensagem(e.getMessage());
+			resultado.setQtdRegistros(0);
+			resultado.setQtdCadastros(0);
+			resultado.setQtdAtualizacoes(0);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resultado);
 		}
 	}
 }
